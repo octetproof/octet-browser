@@ -20,11 +20,21 @@ Every version is on the [Releases](https://github.com/octetproof/octet-browser/r
 | `octetproof-collector-<version>.tgz` | The npm package: `npm install <release URL of this file>` |
 | `octet-edge-linux-amd64`, `octet-edge-linux-arm64` | The edge service you run on your own infrastructure |
 | `SHA256SUMS` | Checksums for every file in the release |
+| `SHA256SUMS.sig`, `SHA256SUMS.pem` | The signature over `SHA256SUMS` and its certificate |
 
-Check each download against `SHA256SUMS` before you use it:
+Check each download before you use it. First, check that the files match the checksums:
 
 ```bash
 sha256sum --check --ignore-missing SHA256SUMS
+```
+
+Then check that the checksums were signed by this repository's release workflow, using [cosign](https://docs.sigstore.dev/cosign/system_config/installation/):
+
+```bash
+cosign verify-blob --signature SHA256SUMS.sig --certificate SHA256SUMS.pem \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp '^https://github.com/octetproof/octet-browser/\.github/workflows/sign-release\.yml@' \
+  SHA256SUMS
 ```
 
 ## Documentation
