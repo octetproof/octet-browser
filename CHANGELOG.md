@@ -2,6 +2,21 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.4.0]
+
+**Action needed:** give your edge a signing key and register it in the Octet Portal when you update the edge. Octet is turning on required edge signatures, and an edge without a registered key then gets `401` with `edge_signature_required`.
+
+- The edge now signs each report it forwards to Octet with its own key, covering the report and what the edge measured. To set it up:
+  1. On the edge server, run `openssl rand -base64 32` and put the result in the edge's environment as `EDGE_SIGNING_KEY`. The key never leaves the server.
+  2. Start the edge. It logs `S2 signing on: kid=… ed25519 public key=…`.
+  3. In the Octet Portal, open your license, then the **Edge certificates** tab, and register the `kid` and public key under **Edge signing key**. You can hold up to 3 keys at once, for a rotation overlap.
+- Octet refuses a forward with an invalid signature, or a signature from a key registered for another license, with `401`.
+- You can revoke an edge signing key in the portal. Octet refuses it within about a minute, with `401` and `edge_key_unknown`.
+- The signing key is separate from the edge's client certificate. Both are needed.
+- The edge no longer sends a `User-Agent` of its own when the browser sent none.
+- A malformed report now gets `400` with `missing_fields` instead of a server error.
+- Fewer wrong countries for some users behind a VPN.
+
 ## [1.3.0]
 
 **Breaking:** update the collector and the edge together, from this release. Octet now accepts only sealed reports and only edges with a client certificate for your license.
