@@ -2,6 +2,26 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.5.0]
+
+**Recommended:** pin Octet's root keys. Octet now signs one manifest that lists every key it uses, with an offline root key that is never on a server. If you verify tokens, check that the token's key is listed in that manifest (`/.well-known/octet-browser-manifest.json.jws`), verified with the root keys from the docs. Then even someone in control of Octet's servers can't make you accept a key Octet didn't sign. The docs show how.
+
+**Action needed:** accept `ES256` verdict tokens. Octet is moving its verdict-token key into a hardware security module, which signs with ECDSA P-256 (`alg: ES256`) instead of Ed25519 (`alg: EdDSA`). The key set lists both while older tokens are still valid. If you verify tokens, take the algorithm from the key the `kid` names: `ES256` for an `EC` key, `EdDSA` for an `OKP` key. The Node and Python examples in the docs show how.
+
+**Action needed:** every report your edge forwards must now carry a valid edge signature. Octet refuses one without it with `401` and `edge_signature_required`. If you set up your edge's signing key with 1.4.0, nothing changes. If not, follow the 1.4.0 steps below before you update.
+
+**Action needed:** your backend must now get a one-time challenge from Octet for each check and pass it to the collector. Without one, Octet refuses the report with `401` and `challenge_required`.
+
+- When your backend creates the `sessionRef` for a page, it calls `POST https://geo.octetproof.com/v1/challenge` with `{"sessionRef": "…"}` and your read token (`Authorization: Bearer octet_read_…`, the same token you read verdicts with). You can also call your edge at `POST /v1/challenge`, which passes the request to Octet unchanged. The answer is `{"challenge": "…", "exp": …}`.
+- Pass it to the collector: `octet.verify({ apiUrl, sessionRef, challenge })` (or `start()`). The collector refuses to start without it.
+- A challenge works for one report, within 10 minutes, for that `sessionRef` only. A retry, or a page left open longer, needs a new one. Octet answers a reused challenge with `409` and `challenge_spent`, and an expired one with `401` and `challenge_expired`.
+- This stops an old report from being replayed, and ties each report to the session your backend created.
+- The verdict reply now carries a `deviceKey`: the same browser gets the same value on your license, and a different one on every other license, so it lets you recognise a returning browser and links nothing across Octet customers. It is also signed in the token, whose `typ` is now `octet-browser-verdict+jwt;v=2`; accept `;v=1` too for tokens issued before. The value changes when the browser's own key does (cleared site data, a private window, or Safari's 7-day storage limit). Mention it in your privacy notice as needed.
+- When your edge serves HTTPS itself, it now also sends Octet a fingerprint of the browser's TLS connection, with no personal data. Nothing to configure. Mention it in your privacy notice as needed.
+- Verdict tokens no longer carry `clientNet`, the hash of the user's network, because it could be reversed to the network. Instead, send the user's IP as your backend saw it with the challenge request (`{"sessionRef": "…", "clientIp": "…"}`). The token then carries `clientNetMatch`: `true` when the report came from that network (the same /24, or /48 for IPv6), `false` when not. Octet keeps only a keyed tag of the network in the challenge. If you checked `clientNet`, check `clientNetMatch` instead.
+- Verdict tokens now carry a `chain`: hashes of each signed step of the session, so you (or an auditor) can show that a verdict answers the exact challenge your backend got, and came through your edge. The token's `typ` is now `octet-browser-verdict+jwt;v=3`; accept `;v=2` and `;v=1` too. Keep the challenge token with the verdict to check it later; the challenge keys are at `/.well-known/browser-challenge-jwks.json`. Optional: set `EDGE_CHAIN_LOG=1` on your edge to log the matching hashes for every forward.
+- Verdict tokens you store stay verifiable after Octet changes its signing key. `/.well-known/browser-verdict-jwks-archive.json` lists every key Octet has signed with and when it was in use. The regular key set still lists only the current key.
+
 ## [1.4.0]
 
 **Action needed:** give your edge a signing key and register it in the Octet Portal when you update the edge. Octet is turning on required edge signatures, and an edge without a registered key then gets `401` with `edge_signature_required`.
