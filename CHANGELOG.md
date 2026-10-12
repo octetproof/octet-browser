@@ -2,6 +2,10 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.5.1]
+
+A maintenance release. The collector and the edge you run are unchanged from 1.5.0, so there's nothing to update or change. You can stay on 1.5.0.
+
 ## [1.5.0]
 
 **Recommended:** pin Octet's root keys. Octet now signs one manifest that lists every key it uses, with an offline root key that is never on a server. If you verify tokens, check that the token's key is listed in that manifest (`/.well-known/octet-browser-manifest.json.jws`), verified with the root keys from the docs. Then even someone in control of Octet's servers can't make you accept a key Octet didn't sign. The docs show how.
