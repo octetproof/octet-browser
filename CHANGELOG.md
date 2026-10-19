@@ -2,6 +2,15 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.6.0]
+
+Nothing changes in how you call Octet: the collector's options, the challenge, the verdict reply and the token are the same as in 1.5.0. Update the collector and your edge when convenient.
+
+- Your edge now serves HTTP/2 when it serves HTTPS itself. Nothing to configure.
+- When your edge serves HTTPS itself, it now also sends Octet a fingerprint of how the browser opens its TCP and HTTP/2 connections, with no personal data, like the TLS fingerprint since 1.5.0. Mention it in your privacy notice as needed.
+- Octet's root-signed manifest (`/.well-known/octet-browser-manifest.json.jws`) gets a new edition that also lists Octet's licence keys. Its format (`typ`, `v: 1`) is unchanged, so a verifier that checks 1.5.0's manifest checks this one too.
+- Reminder: Octet moves its verdict-token key into a hardware security module shortly after this release, so tokens become `ES256`, as announced in 1.5.0. If you verify tokens, make sure you accept `ES256` by then.
+
 ## [1.5.1]
 
 A maintenance release. The collector and the edge you run are unchanged from 1.5.0, so there's nothing to update or change. You can stay on 1.5.0.
