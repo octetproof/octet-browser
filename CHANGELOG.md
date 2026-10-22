@@ -2,6 +2,16 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.7.0]
+
+Nothing changes in how you call Octet: the collector's options, the verdict reply and the token are the same as in 1.6.0. Update the collector and your edge when convenient.
+
+- **New: prove you hold your edge's signing key.** The licence portal now asks you to prove each edge signing key you register (**Edge configuration → Signing keys → Prove**). On the edge box, run `octet-edge prove-key --challenge <the challenge from the portal>` with the edge's usual key settings, and paste the one line it prints into the portal. Keys registered before this step can be proven the same way.
+- **New: keep the signing key off the edge's disk in plain form.** Instead of `EDGE_SIGNING_KEY`, the edge can read its key from a file encrypted to the host's TPM (`EDGE_SIGNING_KEY_FILE` with a systemd credential), or sign in your cloud key service (`EDGE_SIGNING_KMS`, AWS KMS or Google Cloud KMS, Ed25519). Set only one of the three. The edge README shows the steps.
+- **Changed:** if the edge can't sign a forward (for example its cloud key service is unreachable), it now answers the browser with `503` and `edge_signing_failed` and sends nothing to Octet. Before, it sent the forward unsigned, which Octet refused.
+- When your edge serves HTTPS itself, it now also sends Octet two numbers about how steady the browser's connection was during the check, with no personal data. Mention it in your privacy notice as needed.
+- The challenge your backend gets from `POST /v1/challenge` is about 360 characters longer. Pass it to the collector as before.
+
 ## [1.6.0]
 
 Nothing changes in how you call Octet: the collector's options, the challenge, the verdict reply and the token are the same as in 1.5.0. Update the collector and your edge when convenient.
