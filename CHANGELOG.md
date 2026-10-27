@@ -2,6 +2,14 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.8.0]
+
+Nothing changes in how you call Octet: the challenge, the verdict reply and the token are the same as in 1.7.0. Update the collector and your edge when convenient. If your site sets a strict Content Security Policy, read the collector item first.
+
+- **New collector option `cspNonce`.** The collector now runs a short check in a hidden, sandboxed frame with an inline script, removed again within a second. On a page with a nonce-based CSP, pass the page's nonce: `octet.verify({ apiUrl, sessionRef, challenge, cspNonce })` (or `start()`). Without it the collector uses the nonce of a script already on the page. If your page uses Trusted Types and lists its policies in `trusted-types`, add `octet-collector` to the list. With a hash-only CSP, or when the policy is left out, the check is skipped quietly and nothing else changes. The docs' Network and CSP page has the full table.
+- The collector file is about 11 KB larger (4.5 KB gzipped).
+- The edge includes an updated network library with security fixes. Nothing to configure.
+
 ## [1.7.0]
 
 Nothing changes in how you call Octet: the collector's options, the verdict reply and the token are the same as in 1.6.0. Update the collector and your edge when convenient.
