@@ -2,6 +2,12 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.8.1]
+
+A maintenance release. The collector and the edge you run are unchanged from 1.8.0, so there's nothing to update or change.
+
+- Octet now accepts the read tokens the licence portal issues from the week of 9 November 2026. The tokens you use today keep working until the portal replaces them; when it does, use the new ones as before.
+
 ## [1.8.0]
 
 Nothing changes in how you call Octet: the challenge, the verdict reply and the token are the same as in 1.7.0. Update the collector and your edge when convenient. If your site sets a strict Content Security Policy, read the collector item first.
