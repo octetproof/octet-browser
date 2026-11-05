@@ -2,6 +2,13 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.9.1]
+
+Nothing changes in how you call Octet: the challenge, the verdict reply and the token are the same as in 1.8.1. The edge you run is unchanged, so only the collector has a new version. Update it when convenient.
+
+- **New collector function `settled()`.** It resolves once the collector has finished sending everything for the latest check, whether that check succeeded or failed. It rejects only if `start()` was never called. If your page starts a check and then navigates away soon after, await `octet.settled()` first. Using it is optional, and `verify()`, `start()` and `ready()` work as before.
+- The collector file is about 5 KB larger, and the ES module build about 7 KB.
+
 ## [1.8.1]
 
 A maintenance release. The collector and the edge you run are unchanged from 1.8.0, so there's nothing to update or change.
