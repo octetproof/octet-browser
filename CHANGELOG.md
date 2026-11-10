@@ -2,6 +2,13 @@
 
 All notable changes to Octet Browser are listed here. Each version's files are on the [Releases](https://github.com/octetproof/octet-browser/releases) page, and the [docs](https://octetproof.com/docs/browser/) describe every option.
 
+## [1.10.0]
+
+Nothing changes in how you call Octet: the challenge, the verdict reply and the token are the same as in 1.9.1. Update the collector and your edge when convenient.
+
+- The edge now gives up on a slow connection to Octet after a set time, and keeps more connections to Octet open, so one slow request no longer holds up the others. It also closes a browser's idle connection after two minutes. Nothing to configure.
+- The collector file is about 3 KB larger.
+
 ## [1.9.1]
 
 Nothing changes in how you call Octet: the challenge, the verdict reply and the token are the same as in 1.8.1. The edge you run is unchanged, so only the collector has a new version. Update it when convenient.
